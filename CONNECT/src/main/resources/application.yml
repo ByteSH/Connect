@@ -12,10 +12,20 @@ spring:
       host: localhost
       port: 27017
       database: CONNECT_DATA
+  redis:
+    host: localhost
+    port: 6379
 
 
 server:
   port: 8080
+
+
+weather:
+  api:
+    key: e44f51fd9b1ce0fbd4f5bd9a1d81e057
+
+
 
 
 logging:

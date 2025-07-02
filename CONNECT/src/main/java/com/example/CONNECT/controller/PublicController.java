@@ -1,8 +1,10 @@
 package com.example.CONNECT.controller;
 
 import com.example.CONNECT.entry.User;
+import com.example.CONNECT.exception.WeatherServiceException;
 import com.example.CONNECT.repository.UserRepositoryIMPL;
 import com.example.CONNECT.service.UserService;
+import com.example.CONNECT.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,11 @@ public class PublicController {
     @Autowired
     private UserRepositoryIMPL userRepositoryIMPL;
 
+    Integer temperature;
+    List<String > weather_description;
 
+    @Autowired
+    public WeatherService weatherService;
 
     @GetMapping("/health-check")
     public ResponseEntity<String> healthCheck(){
@@ -46,4 +52,22 @@ public class PublicController {
     public List<User> getSentiment(){
         return userRepositoryIMPL.getUserForSA();
     }
+
+
+
+
+
+    @GetMapping("/weather-check/{city}")
+    public ResponseEntity<?> weatherCheck(@PathVariable String city){
+        try{
+            temperature = weatherService.getWeather(city).getCurrent().getTemperature();
+            weather_description = weatherService.getWeather(city).getCurrent().getWeatherDescriptions();
+            return new ResponseEntity<>(temperature+" "+weather_description,HttpStatus.OK);
+        } catch (WeatherServiceException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }
